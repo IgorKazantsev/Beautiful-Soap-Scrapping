@@ -34,7 +34,7 @@ def scrape_categories_from_main_page(url, headers):
             if item_href:
                 links_from_index.append(item_href)
 
-    with open('C:/Users/igor/Desktop/Parsing Pet Project/Looduspere.ee/links_from_index.json', 'w') as new_file:
+    with open('C:/Users/igor/Desktop/Parsing Pet Project/Beautiful-Soap-Scrapping/Looduspere.ee/links_from_index.json', 'w') as new_file:
         json.dump(links_from_index, new_file, indent = 4)
 
 scrape_categories_from_main_page(url, headers)
@@ -42,7 +42,7 @@ scrape_categories_from_main_page(url, headers)
 
 # Функция для добавления ссылок категорий в json
 
-file_path_1 = 'C:/Users/igor/Desktop/Parsing Pet Project/Looduspere.ee/all_categories_links_pagination.json'
+file_path_1 = 'C:/Users/igor/Desktop/Parsing Pet Project/Beautiful-Soap-Scrapping/Looduspere.ee/all_categories_links_pagination.json'
 
 def add_json_category_links(data):
     
@@ -63,7 +63,7 @@ def add_json_category_links(data):
 
 # Достаем категории из главной страницы 
 
-file_path_2 = 'C:/Users/igor/Desktop/Parsing Pet Project/Looduspere.ee/links_from_index.json'
+file_path_2 = 'C:/Users/igor/Desktop/Parsing Pet Project/Beautiful-Soap-Scrapping/Looduspere.ee/links_from_index.json'
 with open(file_path_2, 'r') as file:
     main_categories = json.load(file)
     
@@ -98,7 +98,7 @@ for item in main_categories:
     get_all_pagination_links(item, headers)
 
 
-file_path_3 = 'C:/Users/igor/Desktop/Parsing Pet Project/Looduspere.ee/all_products_links.json'
+file_path_3 = 'C:/Users/igor/Desktop/Parsing Pet Project/Beautiful-Soap-Scrapping/Looduspere.ee/all_products_links.json'
 
 # Функция для парсинга всех ссылок на все товары
 
@@ -144,17 +144,18 @@ def get_product_data(link, headers):
 
     data = {}
 
-    data['Время обновления'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    time_now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    data['Время обновления'] = time_now
+
 
     product_link = link
-
     if product_link:
         data['Ссылка'] = product_link
     else:
         data['Ссылка'] = 'Ссылка не найдена!'
 
-    product_name_tag = soup.find('h1')
 
+    product_name_tag = soup.find('h1')
     if product_name_tag:
         product_name = product_name_tag.text.strip()
         data['Название товара'] = product_name
@@ -201,7 +202,7 @@ def get_product_data(link, headers):
     return(data)
 
 
-file_path_4 = 'C:/Users/igor/Desktop/Parsing Pet Project/Looduspere.ee/final_dictionary.json'
+file_path_4 = 'C:/Users/igor/Desktop/Parsing Pet Project/Beautiful-Soap-Scrapping/Looduspere.ee/final_dictionary.json'
 
 # Проверка существующего файла и загрузка данных
 if not os.path.exists(file_path_4):
@@ -237,6 +238,7 @@ with open(file_path_4, 'r', encoding = 'utf-8') as file:
 df = pd.DataFrame(data)
 
 df.rename(columns={
+    'Время обновления': 'time_now'
     'Название товара': 'product_name',
     'Цена товара': 'price',
     'Категория товара': 'category',
@@ -245,9 +247,9 @@ df.rename(columns={
     'Ссылка': 'link'
 }, inplace = True)
 
-df = df[['product_name', 'price', 'category', 'sku', 'stock', 'link']]
+df = df[['time_now', 'product_name', 'price', 'category', 'sku', 'stock', 'link']]
 
-output_path = 'C:/Users/igor/Desktop/Parsing Pet Project/Looduspere.ee/products_table.xlsx'
+output_path = 'C:/Users/igor/Desktop/Parsing Pet Project/Beautiful-Soap-Scrapping/Looduspere.ee/products_table.xlsx'
 
 df.to_excel(output_path, index = False)
 
